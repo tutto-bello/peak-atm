@@ -5,19 +5,19 @@ import { setAmount, processWithdrawal } from '../logic/withdrawal-slice';
 import { addHistory } from '../logic/history-slice';
 import { manipulateBill } from '../logic/atm-bills-slice';
 import { RootState } from '../logic/store';
+import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
 
-const Home = () => {
+const UserScreen = () => {
   const dispatch = useDispatch();
   const [amount, setAmountInput] = useState('');
-  const {
-    amount: withdrawalAmount,
-    success,
-    error,
-    billsGiven,
-  } = useSelector((state: RootState) => state.withdrawal);
+  const { success, error, billsGiven } = useSelector(
+    (state: RootState) => state.withdrawal
+  );
   const availableBills = useSelector(
     (state: RootState) => state.atmBills.bills
   );
+
+  console.log(success, 'success!!');
 
   const handleWithdrawal = () => {
     const amountInt = parseInt(amount);
@@ -25,7 +25,6 @@ const Home = () => {
 
     dispatch(setAmount(amountInt));
     dispatch(processWithdrawal({ amount: amountInt, availableBills }));
-
     if (success) {
       // Update bill quantities
       billsGiven.forEach((bill) => {
@@ -46,22 +45,44 @@ const Home = () => {
           billsGiven,
         })
       );
+      console.log('Withdrawal successful!');
+    } else {
+      // Log the failed withdrawal to history
+      dispatch(
+        addHistory({
+          timestamp: new Date().toISOString(),
+          amount: amountInt,
+          success: false,
+          billsGiven: [],
+        })
+      );
     }
+    setAmountInput('');
   };
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Enter withdrawal amount:</Text>
-      <TextInput
-        keyboardType="numeric"
-        value={amount}
-        onChangeText={setAmountInput}
-        style={{ height: 40, borderColor: 'gray', borderWidth: 1 }}
-      />
-      <Button title="Submit" onPress={handleWithdrawal} />
-      {success && <Text>Withdrawal Successful!</Text>}
-      {error && <Text>{error}</Text>}
-    </View>
+    <SafeAreaProvider>
+      <SafeAreaView style={styles.container}>
+        <Text style={styles.title}>Enter withdrawal amount:</Text>
+        <TextInput
+          keyboardType="numeric"
+          value={amount}
+          onChangeText={setAmountInput}
+          style={styles.input}
+        />
+        <Button title="Submit" onPress={handleWithdrawal} />
+        {billsGiven.map((bill, index) => (
+          <View key={bill.denomination + index}>
+            <Text>
+              {bill.quantity} x {bill.denomination} bill
+              {bill.quantity > 1 && 's'}
+            </Text>
+          </View>
+        ))}
+        {success && <Text>Withdrawal Successful!</Text>}
+        {error && <Text>{error}</Text>}
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 };
 
@@ -83,6 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 30,
     fontWeight: 'bold',
   },
+  input: { height: 40, borderColor: 'gray', borderWidth: 1 },
 });
 
-export default Home;
+export default UserScreen;
