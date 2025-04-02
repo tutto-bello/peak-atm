@@ -1,14 +1,22 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { View, Text, Button, TextInput, StyleSheet } from 'react-native';
-import { setAmount, processWithdrawal } from '../logic/withdrawal-slice';
+import {
+  View,
+  Text,
+  Button,
+  TextInput,
+  StyleSheet,
+  Keyboard,
+} from 'react-native';
+import { processWithdrawal } from '../logic/withdrawal-slice';
 import { addHistory } from '../logic/history-slice';
 import { manipulateBill } from '../logic/atm-bills-slice';
 import { RootState } from '../logic/store';
 import { SafeAreaView, SafeAreaProvider } from 'react-native-safe-area-context';
+import type { AppDispatch } from '../logic/store';
 
 const UserScreen = () => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const [amount, setAmountInput] = useState('');
   const { success, error, billsGiven } = useSelector(
     (state: RootState) => state.withdrawal
@@ -17,16 +25,17 @@ const UserScreen = () => {
     (state: RootState) => state.atmBills.bills
   );
 
-  console.log(success, 'success!!');
-
-  const handleWithdrawal = () => {
+  const handleWithdrawal = async () => {
     const amountInt = parseInt(amount);
     if (!amountInt || amountInt <= 0) return;
 
-    dispatch(setAmount(amountInt));
-    dispatch(processWithdrawal({ amount: amountInt, availableBills }));
-    if (success) {
-      // Update bill quantities
+    const resultAction = await dispatch(
+      processWithdrawal({ amount: amountInt, availableBills })
+    );
+
+    if (processWithdrawal.fulfilled.match(resultAction)) {
+      const { billsGiven } = resultAction.payload;
+
       billsGiven.forEach((bill) => {
         dispatch(
           manipulateBill({
@@ -36,7 +45,6 @@ const UserScreen = () => {
         );
       });
 
-      // Log the successful withdrawal to history
       dispatch(
         addHistory({
           timestamp: new Date().toISOString(),
@@ -45,9 +53,9 @@ const UserScreen = () => {
           billsGiven,
         })
       );
-      console.log('Withdrawal successful!');
+      setAmountInput('');
+      Keyboard.dismiss();
     } else {
-      // Log the failed withdrawal to history
       dispatch(
         addHistory({
           timestamp: new Date().toISOString(),
@@ -57,7 +65,6 @@ const UserScreen = () => {
         })
       );
     }
-    setAmountInput('');
   };
 
   return (
