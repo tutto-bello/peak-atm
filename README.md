@@ -86,29 +86,27 @@ Here are some previews of the app:
 
 ### ATM Screen
 
-![ATM Screen](apps/atm/assets/screenshots/atm-screen.png)
+<img src="apps/atm/assets/screenshots/atm-screen.png" alt="ATM Screen" width="250"/>
 
 ### ATM Success Screen
 
-![ATM Screen](apps/atm/assets/screenshots/success-screen.png)
+<img src="apps/atm/assets/screenshots/success-screen.png" alt="ATM Screen" width="250"/>
 
 ### ATM Error Screen
 
-![ATM Screen](apps/atm/assets/screenshots/error-screen.png)
+<img src="apps/atm/assets/screenshots/error-screen.png" alt="ATM Screen" width="250"/>
 
 ### Login Screen
 
-![Login Screen](apps/atm/assets/screenshots/login-screen.png)
+<img src="apps/atm/assets/screenshots/login-screen.png" alt="ATM Screen" width="250"/>
 
 ### History Screen
 
-![History Screen](apps/atm/assets/screenshots/history-screen.png)
+<img src="apps/atm/assets/screenshots/history-screen.png" alt="ATM Screen" width="250"/>
 
 ### Operator Screen
 
-![Operator Screen](apps/atm/assets/screenshots/operator-screen.png)
-
-_(Replace `path-to-...` with the actual image paths.)_
+<img src="apps/atm/assets/screenshots/operator-screen.png" alt="ATM Screen" width="250"/>
 
 ---
 
