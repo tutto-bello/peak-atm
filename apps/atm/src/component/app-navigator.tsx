@@ -9,13 +9,21 @@ import ClockIcon from '../component/icons/clock';
 import SettingIcon from '../component/icons/settings';
 import ProtectedRoute from '../auth/protected-route';
 import LogoutButton from './logout-botton';
+import { useTheme } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
 const AppNavigator = () => {
+  const theme = useTheme();
   return (
     <NavigationContainer>
-      <Tab.Navigator id={undefined}>
+      <Tab.Navigator
+        id={undefined}
+        screenOptions={{
+          tabBarActiveTintColor: theme.colors.primary, // Active icon & label color
+          tabBarInactiveTintColor: 'gray',
+        }}
+      >
         <Tab.Screen
           name="ATM"
           component={UserScreen}

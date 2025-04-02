@@ -66,7 +66,9 @@ export const processWithdrawal = createAsyncThunk<
 
       return { success: true, billsGiven };
     } else {
-      return rejectWithValue('Insufficient bills to complete the transaction.');
+      return rejectWithValue(
+        'Insufficient bills to complete the transaction. Please try a different amount.'
+      );
     }
   }
 );

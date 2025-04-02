@@ -1,73 +1,124 @@
 # Peak
 
-## This NX repo created for PEAK interview task
+## Introduction
 
-## Run tasks
+This Nx repository was created for the **PEAK interview task**. It contains a **React Native app** and shared **TypeScript types** for modular and scalable development.
 
-To run the dev server for your app, use:
+## Project Structure
+
+- `apps/atm/` - The main **React Native application**.
+- `libs/shared-types/` - A **shared library** for TypeScript types, used across different parts of the project.
+- `node_modules/` - Dependencies for the workspace.
+- `package.json` - Project dependencies and scripts.
+- `tsconfig.base.json` - TypeScript configuration for the monorepo.
+
+---
+
+## Setup & Running the Project
+
+### 1️⃣ Install Dependencies
+
+Make sure you have **Node.js** and **Yarn** or **npm** installed. Then, install all dependencies:
+
+```sh
+npm install  # or yarn install
+```
+
+### 2️⃣ Running the React Native App
+
+To start the development server for the ATM app, run:
+
+```sh
+cd apps/atm
+npx react-native start --reset-cache
+```
+
+To run the app on an **iOS simulator**:
+
+```sh
+cd apps/atm/ios
+pod install
+cd ../..
+npx react-native run-ios
+```
+
+To run the app on **Android**:
+
+```sh
+npx react-native run-android
+```
+
+After the app run you can login as operator with `1234` password.
+
+### 3️⃣ Running with Nx
+
+Alternatively, you can use **Nx CLI** to serve the app:
 
 ```sh
 npx nx serve atm
 ```
 
-To create a production bundle:
+To build a production-ready bundle:
 
 ```sh
 npx nx build atm
 ```
 
-To see all available targets to run for a project, run:
+To view available tasks:
 
 ```sh
 npx nx show project atm
 ```
 
-These targets are either [inferred automatically](https://nx.dev/concepts/inferred-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) or defined in the `project.json` or `package.json` files.
+### 4️⃣ Running TypeScript Library
 
-[More about running tasks in the docs &raquo;](https://nx.dev/features/run-tasks?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-
-## Add new projects
-
-While you could add new projects to your workspace manually, you might want to leverage [Nx plugins](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) and their [code generation](https://nx.dev/features/generate-code?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) feature.
-
-Use the plugin's generator to create new projects.
-
-To generate a new application, use:
+The `shared-types` library contains TypeScript types and does not need to be manually run. However, you can build it using:
 
 ```sh
-npx nx g @nx/react-native:app demo
+npx nx build shared-types
 ```
 
-To generate a new library, use:
+---
 
-```sh
-npx nx g @nx/react:lib mylib
-```
+## Screenshots
 
-You can use `npx nx list` to get a list of installed plugins. Then, run `npx nx list <plugin-name>` to learn about more specific capabilities of a particular plugin. Alternatively, [install Nx Console](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) to browse plugins and generators in your IDE.
+Here are some previews of the app:
 
-[Learn more about Nx plugins &raquo;](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects) | [Browse the plugin registry &raquo;](https://nx.dev/plugin-registry?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### ATM Screen
 
-[Learn more about Nx on CI](https://nx.dev/ci/intro/ci-with-nx#ready-get-started-with-your-provider?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+![ATM Screen](apps/atm/assets/screenshots/atm-screen.png)
 
-## Install Nx Console
+### ATM Success Screen
 
-Nx Console is an editor extension that enriches your developer experience. It lets you run tasks, generate code, and improves code autocompletion in your IDE. It is available for VSCode and IntelliJ.
+![ATM Screen](apps/atm/assets/screenshots/success-screen.png)
 
-[Install Nx Console &raquo;](https://nx.dev/getting-started/editor-setup?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+### ATM Error Screen
 
-## Useful links
+![ATM Screen](apps/atm/assets/screenshots/error-screen.png)
 
-Learn more:
+### Login Screen
 
-- [Learn more about this workspace setup](https://nx.dev/nx-api/react-native?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Learn about Nx on CI](https://nx.dev/ci/intro/ci-with-nx?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [Releasing Packages with Nx release](https://nx.dev/features/manage-releases?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
-- [What are Nx plugins?](https://nx.dev/concepts/nx-plugins?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+![Login Screen](apps/atm/assets/screenshots/login-screen.png)
 
-And join the Nx community:
+### History Screen
 
-- [Discord](https://go.nx.dev/community)
-- [Follow us on X](https://twitter.com/nxdevtools) or [LinkedIn](https://www.linkedin.com/company/nrwl)
-- [Our Youtube channel](https://www.youtube.com/@nxdevtools)
-- [Our blog](https://nx.dev/blog?utm_source=nx_project&utm_medium=readme&utm_campaign=nx_projects)
+![History Screen](apps/atm/assets/screenshots/history-screen.png)
+
+### Operator Screen
+
+![Operator Screen](apps/atm/assets/screenshots/operator-screen.png)
+
+_(Replace `path-to-...` with the actual image paths.)_
+
+---
+
+## Useful Links
+
+- [Nx Documentation](https://nx.dev/)
+- [React Native Documentation](https://reactnative.dev/)
+- [Nx React Native Plugin](https://nx.dev/nx-api/react-native)
+- [Join the Nx Community](https://go.nx.dev/community)
+
+---
+
+This project is structured for scalability and modular development using **Nx** and **React Native**. 🚀
