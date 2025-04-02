@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   View,
@@ -9,26 +9,26 @@ import {
   TouchableWithoutFeedback,
 } from 'react-native';
 import { useKeyboard } from '@react-native-community/hooks';
-import { processWithdrawal } from '../logic/withdrawal-slice';
+import { processWithdrawal, reset } from '../logic/withdrawal-slice';
 import { addHistory } from '../logic/history-slice';
 import { manipulateBill } from '../logic/atm-bills-slice';
 import { RootState } from '../logic/store';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import type { AppDispatch } from '../logic/store';
 import { Button, TextInput, Snackbar, Text, Chip } from 'react-native-paper';
+import { useNavigation } from '@react-navigation/native';
 
 const UserScreen = () => {
   const dispatch = useDispatch<AppDispatch>();
   const { keyboardHeight } = useKeyboard();
+  const navigation = useNavigation();
 
-  // State for amount input and snackbar
   const [amount, setAmount] = useState('');
   const [snackbar, setSnackbar] = useState({
     type: 'error' as 'success' | 'error',
     visible: false,
   });
 
-  // Redux store data
   const { error, billsGiven } = useSelector(
     (state: RootState) => state.withdrawal
   );
@@ -36,14 +36,12 @@ const UserScreen = () => {
     (state: RootState) => state.atmBills.bills
   );
 
-  // Snackbar control
   const showSnackbar = (type: 'success' | 'error') =>
     setSnackbar({ type, visible: true });
 
   const onDismissSnackbar = () =>
     setSnackbar((prev) => ({ ...prev, visible: false }));
 
-  // Handle withdrawal logic
   const handleWithdrawal = async () => {
     const amountInt = parseInt(amount);
     if (!amountInt || amountInt <= 0) return;
@@ -78,6 +76,16 @@ const UserScreen = () => {
       showSnackbar('error');
     }
   };
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      setAmount('');
+      setSnackbar({ type: 'error', visible: false });
+      dispatch(reset());
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   return (
     <SafeAreaView style={styles.safeArea}>
@@ -144,12 +152,13 @@ const UserScreen = () => {
 };
 
 const styles = StyleSheet.create({
-  safeArea: { flex: 1 },
+  safeArea: { flex: 1, paddingTop: Platform.OS === 'android' ? 0 : -40 },
   flexContainer: { flex: 1 },
   container: {
     flex: 1,
     paddingHorizontal: 24,
     alignItems: 'stretch',
+    paddingTop: Platform.OS === 'android' ? 24 : 0,
   },
   chipContainer: {
     marginVertical: 16,

@@ -1,15 +1,30 @@
 import React, { createContext, useContext, useState } from 'react';
 
-const AuthContext = createContext({
+interface AuthContextType {
+  isAuthenticated: boolean;
+  login: (password: string) => boolean;
+  logout: () => void;
+}
+
+const CORRECT_PASSWORD = '1234';
+
+const AuthContext = createContext<AuthContextType>({
   isAuthenticated: false,
-  login: () => {},
+  login: () => false,
   logout: () => {},
 });
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  const login = () => setIsAuthenticated(true);
+  const login = (password: string) => {
+    if (password === CORRECT_PASSWORD) {
+      setIsAuthenticated(true);
+      return true;
+    }
+    return false;
+  };
+
   const logout = () => setIsAuthenticated(false);
 
   return (

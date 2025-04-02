@@ -1,106 +1,141 @@
-import { useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { manipulateBill } from '../logic/atm-bills-slice';
-import {
-  Button,
-  TextInput,
-  View,
-  Text,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native';
+import { Button, Text, Snackbar, Divider } from 'react-native-paper';
 import { RootState } from '../logic/store';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import {
+  StyleSheet,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
+} from 'react-native';
+import BillChip from '../component/bill-chip';
+import BillControl from '../component/bill-control';
+import { useKeyboard } from '@react-native-community/hooks';
 
 const OperatorScreen = () => {
-  const [billAmount, setBillAmount] = useState('');
+  const [billAmount, setBillAmount] = useState<number | undefined>(undefined);
   const [denomination, setDenomination] = useState(20000);
+  const [snackbar, setSnackbar] = useState({ visible: false, message: '' });
   const dispatch = useDispatch();
-  const { history } = useSelector((state: RootState) => state.history);
+  const { keyboardHeight } = useKeyboard();
   const { bills } = useSelector((state: RootState) => state.atmBills);
 
-  const handleManipulateBills = (change: number) => {
-    const billInt = parseInt(billAmount);
-    if (!billInt || billInt <= 0) return;
+  const handleManipulateBills = useCallback(
+    (change: number) => {
+      if (!billAmount || billAmount <= 0) {
+        setSnackbar({ visible: true, message: 'Invalid bill amount' });
+        return;
+      }
+      dispatch(manipulateBill({ denomination, change: change * billAmount }));
+      setBillAmount(undefined);
+      Keyboard.dismiss();
+      setSnackbar({ visible: true, message: 'Bills updated successfully' });
+    },
+    [billAmount, denomination, dispatch]
+  );
 
-    dispatch(
-      manipulateBill({
-        denomination,
-        change: change * billInt,
-      })
-    );
-  };
+  const handleIncrease = useCallback(() => {
+    setBillAmount((prev) => (prev ? prev + 1 : 1));
+  }, []);
+
+  const handleDecrease = useCallback(() => {
+    setBillAmount((prev) => (prev && prev > 1 ? prev - 1 : undefined));
+  }, []);
 
   return (
-    <View>
-      {bills.map((bill, index) => (
-        <View key={index}>
-          <Text>
-            {bill.denomination} x {bill.quantity}
-          </Text>
-        </View>
-      ))}
+    <SafeAreaView style={styles.safeArea}>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={styles.flexContainer}
+      >
+        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+          <View style={styles.container}>
+            <Text variant="headlineSmall">ATM Bills</Text>
 
-      <Text>History</Text>
-      {history.map((entry, index) => (
-        <View key={index}>
-          <Text>
-            {entry.timestamp} - {entry.success ? 'Success' : 'Failure'}
-          </Text>
-          <Text>Amount: {entry.amount}</Text>
-          <Text>{entry.timestamp}</Text>
-          {entry.billsGiven.map((bill, index) => (
-            <Text key={index}>
-              {bill.denomination} x {bill.quantity}
-            </Text>
-          ))}
-        </View>
-      ))}
+            <View style={styles.chipContainer}>
+              {bills.map((bill) => (
+                <BillChip
+                  key={bill.denomination}
+                  denomination={bill.denomination}
+                  quantity={bill.quantity}
+                  isSelected={denomination === bill.denomination}
+                  onPress={() => setDenomination(bill.denomination)}
+                />
+              ))}
+            </View>
 
-      {bills.map((bill) => (
-        <TouchableOpacity
-          key={bill.denomination}
-          style={{
-            padding: 10,
-            backgroundColor:
-              denomination === bill.denomination ? 'blue' : 'lightgray',
-            margin: 5,
-          }}
-          onPress={() => setDenomination(bill.denomination)}
-        >
-          <Text>{bill.denomination}</Text>
-        </TouchableOpacity>
-      ))}
-      <TextInput
-        keyboardType="numeric"
-        value={billAmount}
-        onChangeText={setBillAmount}
-        style={styles.input}
-      />
-      <Button title="Add Bills" onPress={() => handleManipulateBills(1)} />
-      <Button title="Remove Bills" onPress={() => handleManipulateBills(-1)} />
-    </View>
+            <Divider style={styles.divider} />
+
+            <Text variant="headlineSmall">Manage Bills</Text>
+            <BillControl
+              billAmount={billAmount}
+              onIncrease={handleIncrease}
+              onDecrease={handleDecrease}
+              onAmountChange={setBillAmount}
+            />
+
+            <Button mode="contained" onPress={() => handleManipulateBills(1)}>
+              Add Bills
+            </Button>
+            <Button
+              mode="outlined"
+              onPress={() => handleManipulateBills(-1)}
+              style={styles.removeButton}
+            >
+              Remove Bills
+            </Button>
+
+            <View
+              style={[
+                styles.snackbarContainer,
+                { bottom: keyboardHeight > 0 ? keyboardHeight - 140 : 20 },
+              ]}
+            >
+              <Snackbar
+                visible={snackbar.visible}
+                onDismiss={() => setSnackbar({ ...snackbar, visible: false })}
+                duration={3000}
+              >
+                {snackbar.message}
+              </Snackbar>
+            </View>
+          </View>
+        </TouchableWithoutFeedback>
+      </KeyboardAvoidingView>
+    </SafeAreaView>
   );
 };
 
 const styles = StyleSheet.create({
+  safeArea: { flex: 1, paddingTop: Platform.OS === 'android' ? 0 : -40 },
   container: {
-    flex: 1,
     padding: 24,
-    backgroundColor: '#eaeaea',
+    paddingTop: Platform.OS === 'android' ? 24 : 0,
+    alignItems: 'stretch',
+    flex: 1,
   },
-  title: {
-    marginTop: 16,
-    paddingVertical: 8,
-    borderWidth: 4,
-    borderColor: '#20232a',
-    borderRadius: 6,
-    backgroundColor: '#61dafb',
-    color: '#20232a',
-    textAlign: 'center',
-    fontSize: 30,
-    fontWeight: 'bold',
+  flexContainer: { flex: 1 },
+  chipContainer: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    marginVertical: 8,
   },
-  input: { height: 40, borderColor: 'gray', borderWidth: 1 },
+  divider: {
+    marginVertical: 12,
+  },
+  removeButton: {
+    marginTop: 8,
+  },
+  snackbarContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    marginVertical: 16,
+  },
 });
 
 export default OperatorScreen;

@@ -14,7 +14,6 @@ const initialState: WithdrawalState = {
   billsGiven: [],
 };
 
-// ✅ Convert to async thunk
 export const processWithdrawal = createAsyncThunk<
   {
     success: boolean;
