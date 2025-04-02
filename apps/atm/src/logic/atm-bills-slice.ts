@@ -1,9 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface Bill {
-  denomination: number;
-  quantity: number;
-}
+import { Bill } from '@peak/shared-types';
 
 export interface AtmBillsState {
   bills: Bill[];

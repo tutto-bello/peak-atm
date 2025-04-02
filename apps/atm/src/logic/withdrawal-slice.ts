@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
-
-export interface WithdrawalState {
-  amount: number;
-  success: boolean;
-  error: string | null;
-  billsGiven: { denomination: number; quantity: number }[];
-}
+import { WithdrawalState } from '@peak/shared-types';
 
 const initialState: WithdrawalState = {
   amount: 0,

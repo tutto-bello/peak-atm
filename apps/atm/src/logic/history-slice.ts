@@ -1,11 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-
-export interface WithdrawalHistory {
-  timestamp: string;
-  amount: number;
-  success: boolean;
-  billsGiven: { denomination: number; quantity: number }[];
-}
+import { WithdrawalHistory } from '@peak/shared-types';
 
 export interface HistoryState {
   history: WithdrawalHistory[];
