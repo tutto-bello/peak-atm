@@ -7,6 +7,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import UserScreen from '../screens/user-screen';
 import OperatorScreen from '../screens/operator-screen';
 import LoginScreen from '../screens/login-screen';
+import { PaperProvider } from 'react-native-paper';
 
 const Tab = createBottomTabNavigator();
 
@@ -24,12 +25,14 @@ const App = () => {
   return (
     <Provider store={store}>
       <AuthProvider>
-        <NavigationContainer>
-          <Tab.Navigator id={undefined}>
-            <Tab.Screen name="User" component={UserScreen} />
-            <Tab.Screen name="Operator" component={ProtectedOperatorScreen} />
-          </Tab.Navigator>
-        </NavigationContainer>
+        <PaperProvider>
+          <NavigationContainer>
+            <Tab.Navigator id={undefined}>
+              <Tab.Screen name="User" component={UserScreen} />
+              <Tab.Screen name="Operator" component={ProtectedOperatorScreen} />
+            </Tab.Navigator>
+          </NavigationContainer>
+        </PaperProvider>
       </AuthProvider>
     </Provider>
   );
