@@ -2,7 +2,7 @@ import React from 'react';
 import { Text, Chip, Card } from 'react-native-paper';
 import { StyleSheet, View, Platform } from 'react-native';
 import { formatTime } from '../utils';
-import { WithdrawalHistory } from '../logic/history-slice';
+import { WithdrawalHistory } from '@peak/shared-types';
 
 const HistoryItem = ({ entry }: { entry: WithdrawalHistory }) => {
   return (

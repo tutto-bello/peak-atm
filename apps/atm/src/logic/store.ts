@@ -1,7 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit';
 import atmBillsReducer, { AtmBillsState } from './atm-bills-slice';
-import withdrawalReducer, { WithdrawalState } from './withdrawal-slice';
+import withdrawalReducer from './withdrawal-slice';
 import historyReducer, { HistoryState } from './history-slice';
+import { WithdrawalState } from '@peak/shared-types';
 
 export const store = configureStore({
   reducer: {

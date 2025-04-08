@@ -38,7 +38,9 @@ export const processWithdrawal = createAsyncThunk<
 
       for (let i = count; i >= 0; i--) {
         let result = getMoney(amount - i * nominal, nominals.slice(1));
-
+        // to understand the recursion
+        // console.log('nominal', nominal);
+        // console.log('result', result);
         if (result !== null) {
           if (i > 0) {
             return { [nominal]: i, ...result };
@@ -57,7 +59,6 @@ export const processWithdrawal = createAsyncThunk<
         .map(Number)
         .sort((a, b) => b - a)
     );
-
     if (result !== null) {
       billsGiven = Object.keys(result).map((denomination) => ({
         denomination: Number(denomination),
